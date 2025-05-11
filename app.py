@@ -7,6 +7,10 @@ app.secret_key = 'clave_secreta'  # ¡Importante para usar session!
 # Inicializar el estado del bot
 bot_status = {"activo": False, "ultima_actividad": None}
 
+@app.route("/")
+def index():
+    return "¡Hola!"
+
 @app.route("/bot/fetch/status", methods=["POST"])
 def actualizar_estado_bot():
     data = request.get_json()
