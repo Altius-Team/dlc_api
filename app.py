@@ -1,22 +1,17 @@
 from flask import Flask, request, jsonify, session
 from datetime import datetime, timezone, timedelta
+import os  # Importa la librería os para acceder a las variables de entorno
 
 app = Flask(__name__)
-app.secret_key = 'clave_secreta'  # ¡Importante para usar session!
+app.secret_key = os.environ.get('SECRET_KEY', 'clave_secreta') # Obtén la clave secreta de las variables de entorno
 
-# Inicializar el estado del bot
 bot_status = {"activo": False, "ultima_actividad": None}
-
-@app.route("/")
-def index():
-    return "¡Hola!"
 
 @app.route("/bot/fetch/status", methods=["POST"])
 def actualizar_estado_bot():
     data = request.get_json()
     if not data:
         return jsonify({"status": False, "mensaje": "No se recibió información"}), 400
-    # Actualizar el estado del bot
     bot_status["activo"] = True
     bot_status["ultima_actividad"] = datetime.now(timezone.utc)
     print("✅ Estado del bot actualizado")
@@ -28,7 +23,6 @@ def obtener_status():
     session['ultima_actividad'] = bot_status["ultima_actividad"]
     ultima = session.get('ultima_actividad')
 
-    # Marcar como inactivo si pasó mucho tiempo sin actividad
     if ultima and (now - ultima > timedelta(minutes=1)):
         bot_status["activo"] = False
 
@@ -38,4 +32,5 @@ def obtener_status():
     })
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = os.environ.get('PORT', 5000)  # Obtén el puerto de la variable de entorno PORT, usa 5000 por defecto localmente
+    app.run(host='0.0.0.0', port=port, debug=True) # Escucha en todas las interfaces y en el puerto asignado
