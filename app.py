@@ -7,7 +7,7 @@ app.secret_key = os.environ.get('SECRET_KEY', 'clave_secreta') # Obtén la clave
 
 bot_status = {"activo": False, "ultima_actividad": None}
 
-@app.route("/", methods=["POST"])
+@app.route("/")
 def recibir_mensaje():
     return jsonify({"status": False, "mensaje": "No tienes permisos para ver este contenido"}), 403
 
