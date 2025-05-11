@@ -11,7 +11,7 @@ bot_status = {"activo": False, "ultima_actividad": None}
 def recibir_mensaje():
     return jsonify({"status": False, "mensaje": "No tienes permisos para ver este contenido"}), 403
 
-@app.route("aom/bot/fetch/status", methods=["POST"])
+@app.route("/aom/bot/fetch/status", methods=["POST"])
 def actualizar_estado_bot():
     data = request.get_json()
     if not data:
@@ -21,7 +21,7 @@ def actualizar_estado_bot():
     print("✅ Estado del bot actualizado")
     return jsonify({"status": True, "mensaje": "Estado actualizado correctamente"}), 200
 
-@app.route("aom/bot/status", methods=["GET"])
+@app.route("/aom/bot/status", methods=["GET"])
 def obtener_status():
     now = datetime.now(timezone.utc)
     session['ultima_actividad'] = bot_status["ultima_actividad"]
