@@ -34,6 +34,26 @@ def obtener_status():
         "activo": bot_status["activo"],
         "ultima_actividad": ultima.isoformat() if ultima else None
     })
+    
+@app.route("/aom/bot/fetch/conductores", methods=["POST"])
+def post_conductores():
+    data = request.get_json()
+    session['conductores'] = data  # Guarda los conductores en la sesión
+    if not data:
+        return jsonify({"error": True, "mensaje": "No se recibió información"}), 400
+    print("✅ Conductores actualizados")
+    return jsonify({"error": False, "mensaje": "Conductores actualizados correctamente"}), 200
+
+@app.route("/aom/bot/conductores", methods=["GET"])
+def get_conductores():
+    conductores = session.get('conductores', [])
+    if not conductores:
+        return jsonify({"error": True, "mensaje": "No hay conductores disponibles"}), 404
+    return jsonify({
+        "error": False,
+        "drivers": conductores
+    }), 200
+
 
 if __name__ == '__main__':
     port = os.environ.get('PORT', 5000)  # Obtén el puerto de la variable de entorno PORT, usa 5000 por defecto localmente
