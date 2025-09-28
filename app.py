@@ -39,10 +39,10 @@ def obtener_status():
 @app.route("/aom/bot/fetch/conductores", methods=["POST"])
 def post_conductores():
     data = request.get_json()
-    session['conductores'] = data  # Guarda los conductores en la sesión
     if not data:
         return jsonify({"error": True, "mensaje": "No se recibió información"}), 400
-    print("✅ Conductores actualizados")
+    CONDUCTORES.update(data)
+    print("✅ Conductores actualizados:", CONDUCTORES)
     return jsonify({"error": False, "mensaje": "Conductores actualizados correctamente"}), 200
 
 @app.route("/aom/bot/conductores", methods=["GET"])
