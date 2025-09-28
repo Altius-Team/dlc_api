@@ -6,6 +6,7 @@ app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'clave_secreta') # Obtén la clave secreta de las variables de entorno
 
 bot_status = {"activo": False, "ultima_actividad": None}
+CONDUCTORES = {}
 
 @app.route("/")
 def recibir_mensaje():
@@ -46,13 +47,9 @@ def post_conductores():
 
 @app.route("/aom/bot/conductores", methods=["GET"])
 def get_conductores():
-    conductores = session.get('conductores', [])
-    if not conductores:
+    if not CONDUCTORES:
         return jsonify({"error": True, "mensaje": "No hay conductores disponibles"}), 404
-    return jsonify({
-        "error": False,
-        "drivers": conductores
-    }), 200
+    return jsonify({"error": False, "drivers": CONDUCTORES}), 200
 
 
 if __name__ == '__main__':
