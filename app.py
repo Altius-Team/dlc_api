@@ -1,9 +1,13 @@
 from flask import Flask, request, jsonify, session
 from datetime import datetime, timezone, timedelta
-import os  # Importa la librería os para acceder a las variables de entorno
+import os
+from flask_cors import CORS
 
 app = Flask(__name__)
-app.secret_key = os.environ.get('SECRET_KEY', 'clave_secreta') # Obtén la clave secreta de las variables de entorno
+CORS(app) 
+CORS(app, origins=["https://aom.azuzu.dev", "http://localhost:3000", "https://panel.andesofmoto.com"])
+
+app.secret_key = os.environ.get('SECRET_KEY', 'clave_secreta')
 
 bot_status = {"activo": False, "ultima_actividad": None}
 CONDUCTORES = {}
@@ -53,5 +57,5 @@ def get_conductores():
 
 
 if __name__ == '__main__':
-    port = os.environ.get('PORT', 5000)  # Obtén el puerto de la variable de entorno PORT, usa 5000 por defecto localmente
-    app.run(host='0.0.0.0', port=port, debug=True) # Escucha en todas las interfaces y en el puerto asignado
+    port = os.environ.get('PORT', 5000)
+    app.run(host='0.0.0.0', port=port, debug=True)
