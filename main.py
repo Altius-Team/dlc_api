@@ -1,4 +1,5 @@
 from flask import Flask, jsonify
+from flask_cors import CORS
 import threading
 import time
 import os
@@ -8,6 +9,9 @@ from config import SUPABASE_CLIENT, BUCKET_NAME
 from fetch_dlc import FetchDLCWiki
 
 app = Flask(__name__)
+
+CORS(app) 
+CORS(app, origins=["https://preview.altiusapp.cc", "http://localhost:3000", "https://panel.andevtc.com"])
 
 # Ruta en el bucket de Supabase para el JSON de DLC (wiki)
 DLC_JSON_PATH = "dlc/wiki_dlc.json"
