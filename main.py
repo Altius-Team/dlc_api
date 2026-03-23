@@ -4,6 +4,7 @@ import threading
 import time
 import os
 import json
+import requests
 
 from config import SUPABASE_CLIENT, BUCKET_NAME
 from fetch_dlc import FetchDLCWiki
@@ -11,7 +12,7 @@ from fetch_dlc import FetchDLCWiki
 app = Flask(__name__)
 
 CORS(app) 
-CORS(app, origins=["https://preview.altiusapp.cc", "http://localhost:3000", "https://panel.andevtc.com"])
+CORS(app, origins=["https://preview.altiusapp.cc", "http://localhost:3000", "https://panel.andevtc.com", "https://preview-tunnel.altiusapp.cc"])
 
 # Ruta en el bucket de Supabase para el JSON de DLC (wiki)
 DLC_JSON_PATH = "dlc/wiki_dlc.json"
@@ -75,9 +76,32 @@ def scheduler():
         time.sleep(43200)  # 12 horas
 
 
+def keep_alive():
+    """Realiza un ping a la propia URL del servicio cada 14 minutos para evitar que Render apague el servicio."""
+    url = os.environ.get("RENDER_EXTERNAL_URL")
+    if not url:
+        print("Keep-alive omitido: RENDER_EXTERNAL_URL no configurada")
+        return
+    
+    while True:
+        try:
+            # Ping a la URL pública para que el balanceador de Render lo cuente como actividad
+            response = requests.get(url, timeout=15)
+            print(f"[Keep-alive] Ping enviado a {url} - Status: {response.status_code}")
+        except Exception as e:
+            print(f"[Keep-alive] Error en el ping: {e}")
+        
+        # Dormir 14 minutos (Render free tier suele apagar tras 15 min de inactividad)
+        time.sleep(840)
+
+
 # En Render puedes desactivar el scheduler y usar un Cron Job que llame a /update-dlc cada 12h
 if os.environ.get("ENABLE_DLC_SCHEDULER", "1") == "1":
     threading.Thread(target=scheduler, daemon=True).start()
+
+# Hilo para keep-alive (opcional si se configura RENDER_EXTERNAL_URL)
+if os.environ.get("ENABLE_KEEP_ALIVE", "1") == "1":
+    threading.Thread(target=keep_alive, daemon=True).start()
 
 
 if __name__ == "__main__":
