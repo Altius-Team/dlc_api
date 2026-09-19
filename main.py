@@ -12,7 +12,7 @@ from fetch_dlc import FetchDLCWiki
 app = Flask(__name__)
 
 CORS(app) 
-CORS(app, origins=["https://preview.altiusapp.cc", "http://localhost:3000", "https://panel.andevtc.com", "https://preview-tunnel.altiusapp.cc"])
+CORS(app, origins=["https://dash.altiusapp.cc", "http://localhost:3000", "https://panel.andevtc.com", "https://tanya.altiusapp.cc"])
 
 # Ruta en el bucket de Supabase para el JSON de DLC (wiki)
 DLC_JSON_PATH = "dlc/wiki_dlc.json"
